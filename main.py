@@ -836,7 +836,7 @@ async def superset_database_create(
 @requires_auth
 @handle_api_errors
 async def superset_database_get_tables(
-    ctx: Context, database_id: int
+    ctx: Context, database_id: int, schema_name: Optional[str] = "public"
 ) -> Dict[str, Any]:
     """
     Get a list of tables for a given database
@@ -850,7 +850,13 @@ async def superset_database_get_tables(
     Returns:
         A dictionary with list of tables including schema and table name information
     """
-    return await make_api_request(ctx, "get", f"/api/v1/database/{database_id}/tables/")
+    payload = {
+      "schema_name": schema_name
+    }
+    params = {
+      "q": json.dumps(payload, indent=2)
+    }
+    return await make_api_request(ctx, "get", f"/api/v1/database/{database_id}/tables/", params=params)
 
 
 @mcp.tool()
